@@ -1,0 +1,219 @@
+{
+  "delivery_points": [
+    {
+      "id": 0,
+      "x": 0,
+      "y": 0,
+      "earliest": 0,
+      "latest": 1440,
+      "service_time": 0
+    },
+    {
+      "id": 1,
+      "x": 6.97,
+      "y": -23.75,
+      "earliest": 82.51,
+      "latest": 444.64,
+      "service_time": 0
+    },
+    {
+      "id": 2,
+      "x": 11.82,
+      "y": 8.83,
+      "earliest": 267.65,
+      "latest": 417.39,
+      "service_time": 0
+    },
+    {
+      "id": 3,
+      "x": -3.9,
+      "y": -23.51,
+      "earliest": 65.59,
+      "latest": 501.07,
+      "service_time": 0
+    },
+    {
+      "id": 4,
+      "x": -23.67,
+      "y": -15.06,
+      "earliest": 194.97,
+      "latest": 508.99,
+      "service_time": 0
+    },
+    {
+      "id": 5,
+      "x": -13.98,
+      "y": 4.46,
+      "earliest": 242.83,
+      "latest": 401.3,
+      "service_time": 0
+    },
+    {
+      "id": 6,
+      "x": 15.29,
+      "y": 9.91,
+      "earliest": 102.08,
+      "latest": 431.1,
+      "service_time": 0
+    },
+    {
+      "id": 7,
+      "x": 22.86,
+      "y": -8.17,
+      "earliest": 27.82,
+      "latest": 419.34,
+      "service_time": 0
+    },
+    {
+      "id": 8,
+      "x": 17.37,
+      "y": 5.19,
+      "earliest": 242.14,
+      "latest": 545.95,
+      "service_time": 0
+    },
+    {
+      "id": 9,
+      "x": 1.81,
+      "y": 23.66,
+      "earliest": 113.56,
+      "latest": 510.41,
+      "service_time": 0
+    },
+    {
+      "id": 10,
+      "x": 16.47,
+      "y": 5.93,
+      "earliest": 258.51,
+      "latest": 515.47,
+      "service_time": 0
+    }
+  ],
+  "traffic_conditions": [
+    {
+      "from_id": 1,
+      "to_id": 0,
+      "speed_factor": 1.13,
+      "delay": 0
+    },
+    {
+      "from_id": 4,
+      "to_id": 1,
+      "speed_factor": 1.28,
+      "delay": 0
+    },
+    {
+      "from_id": 1,
+      "to_id": 6,
+      "speed_factor": 0.82,
+      "delay": 0
+    },
+    {
+      "from_id": 10,
+      "to_id": 5,
+      "speed_factor": 0.73,
+      "delay": 0
+    },
+    {
+      "from_id": 5,
+      "to_id": 3,
+      "speed_factor": 1.14,
+      "delay": 0
+    },
+    {
+      "from_id": 10,
+      "to_id": 10,
+      "speed_factor": 0.66,
+      "delay": 0
+    },
+    {
+      "from_id": 10,
+      "to_id": 2,
+      "speed_factor": 1.03,
+      "delay": 0
+    },
+    {
+      "from_id": 3,
+      "to_id": 2,
+      "speed_factor": 0.97,
+      "delay": 0
+    },
+    {
+      "from_id": 4,
+      "to_id": 10,
+      "speed_factor": 1.15,
+      "delay": 0
+    },
+    {
+      "from_id": 3,
+      "to_id": 10,
+      "speed_factor": 0.86,
+      "delay": 0
+    },
+    {
+      "from_id": 0,
+      "to_id": 3,
+      "speed_factor": 1.26,
+      "delay": 0
+    },
+    {
+      "from_id": 5,
+      "to_id": 6,
+      "speed_factor": 0.81,
+      "delay": 0
+    },
+    {
+      "from_id": 3,
+      "to_id": 9,
+      "speed_factor": 1.3,
+      "delay": 0
+    },
+    {
+      "from_id": 5,
+      "to_id": 3,
+      "speed_factor": 1.12,
+      "delay": 0
+    },
+    {
+      "from_id": 6,
+      "to_id": 10,
+      "speed_factor": 0.97,
+      "delay": 0
+    },
+    {
+      "from_id": 4,
+      "to_id": 2,
+      "speed_factor": 0.8,
+      "delay": 0
+    },
+    {
+      "from_id": 8,
+      "to_id": 8,
+      "speed_factor": 0.81,
+      "delay": 0
+    },
+    {
+      "from_id": 9,
+      "to_id": 6,
+      "speed_factor": 1.32,
+      "delay": 0
+    },
+    {
+      "from_id": 6,
+      "to_id": 5,
+      "speed_factor": 0.78,
+      "delay": 0
+    },
+    {
+      "from_id": 2,
+      "to_id": 8,
+      "speed_factor": 0.99,
+      "delay": 0
+    }
+  ],
+  "config": {
+    "depot_id": 0,
+    "base_speed": 40,
+    "start_time": 0
+  }
+}
