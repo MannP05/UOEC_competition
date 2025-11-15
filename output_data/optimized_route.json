@@ -1009,7 +1009,7 @@
     }
   },
   "total_time_minutes": 1488.48,
-  "computation_time_seconds": 0.0,
+  "computation_time_seconds": 0.0032,
   "num_deliveries": 100,
   "expected_deliveries": 100,
   "all_nodes_visited": true,
