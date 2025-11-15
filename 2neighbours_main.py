@@ -366,30 +366,6 @@ class FastRouteOptimizer:
                 }
         
         return result
-    
-    def update_traffic(self, new_traffic: Dict[Tuple[int, int], TrafficCondition]):
-        """Update traffic conditions"""
-        self.traffic = new_traffic
-    
-    def reoptimize_from_position(self, current_node: int, completed: Set[int], 
-                                 current_time: float) -> Dict:
-        """Re-optimize remaining deliveries"""
-        remaining_points = [p for p in self.points.values() 
-                          if p.id not in completed and p.id != self.depot_id]
-        
-        if not remaining_points:
-            return {"route": [current_node], "num_deliveries": 0, "total_time_minutes": 0}
-        
-        temp_optimizer = FastRouteOptimizer(
-            delivery_points=remaining_points,
-            traffic_conditions=self.traffic,
-            depot_id=current_node,
-            base_speed=self.base_speed
-        )
-        
-        result = temp_optimizer.optimize_route(current_time, time_limit=2.0)
-        result["reoptimized"] = True
-        return result
 
 
 def create_feasible_input(filename: str, num_points: int = 20):
