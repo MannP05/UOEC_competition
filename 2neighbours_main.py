@@ -1,7 +1,7 @@
 import json
 import math
 import time
-from typing import List, Dict, Tuple, Set
+from typing import List, Dict, Tuple
 from dataclasses import dataclass
 
 @dataclass
@@ -274,9 +274,6 @@ class FastRouteOptimizer:
         opt_start = time.time()
         
         print(f"  Problem size: {self.n} nodes")
-        
-        # PHASE 1: CONSTRUCTION (30% of time budget)
-        construction_time_limit = time_limit * 0.3
         
         # Choose construction method based on size
         if self.n <= 30:

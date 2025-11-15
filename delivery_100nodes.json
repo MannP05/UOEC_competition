@@ -14,7 +14,7 @@
       "y": -23.75,
       "earliest": 82.51,
       "latest": 444.64,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 2,
@@ -22,7 +22,7 @@
       "y": 8.83,
       "earliest": 267.65,
       "latest": 417.39,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 3,
@@ -30,7 +30,7 @@
       "y": -23.51,
       "earliest": 65.59,
       "latest": 501.07,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 4,
@@ -38,7 +38,7 @@
       "y": -15.06,
       "earliest": 194.97,
       "latest": 508.99,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 5,
@@ -46,7 +46,7 @@
       "y": 4.46,
       "earliest": 242.83,
       "latest": 401.3,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 6,
@@ -54,7 +54,7 @@
       "y": 9.91,
       "earliest": 102.08,
       "latest": 431.1,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 7,
@@ -62,7 +62,7 @@
       "y": -8.17,
       "earliest": 27.82,
       "latest": 419.34,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 8,
@@ -70,7 +70,7 @@
       "y": 5.19,
       "earliest": 242.14,
       "latest": 545.95,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 9,
@@ -78,7 +78,7 @@
       "y": 23.66,
       "earliest": 113.56,
       "latest": 510.41,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 10,
@@ -86,7 +86,7 @@
       "y": 5.93,
       "earliest": 258.51,
       "latest": 515.47,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 11,
@@ -94,7 +94,7 @@
       "y": -22.71,
       "earliest": 68.37,
       "latest": 457.88,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 12,
@@ -102,7 +102,7 @@
       "y": -13.36,
       "earliest": 30.3,
       "latest": 455.59,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 13,
@@ -110,7 +110,7 @@
       "y": -6.76,
       "earliest": 111.05,
       "latest": 441.9,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 14,
@@ -118,7 +118,7 @@
       "y": 21.83,
       "earliest": 194.41,
       "latest": 521.83,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 15,
@@ -126,7 +126,7 @@
       "y": 11.46,
       "earliest": 49.02,
       "latest": 475.89,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 16,
@@ -134,7 +134,7 @@
       "y": 7.0,
       "earliest": 167.08,
       "latest": 536.92,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 17,
@@ -142,7 +142,7 @@
       "y": 13.8,
       "earliest": 68.71,
       "latest": 406.42,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 18,
@@ -150,7 +150,7 @@
       "y": -11.61,
       "earliest": 63.29,
       "latest": 588.58,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 19,
@@ -158,7 +158,7 @@
       "y": -9.27,
       "earliest": 196.63,
       "latest": 479.13,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 20,
@@ -166,7 +166,7 @@
       "y": -2.06,
       "earliest": 79.46,
       "latest": 449.33,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 21,
@@ -174,7 +174,7 @@
       "y": -11.86,
       "earliest": 175.38,
       "latest": 579.56,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 22,
@@ -182,7 +182,7 @@
       "y": -14.03,
       "earliest": 299.26,
       "latest": 501.91,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 23,
@@ -190,7 +190,7 @@
       "y": -22.64,
       "earliest": 32.89,
       "latest": 525.49,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 24,
@@ -198,7 +198,7 @@
       "y": -3.89,
       "earliest": 19.06,
       "latest": 476.32,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 25,
@@ -206,7 +206,7 @@
       "y": 1.46,
       "earliest": 291.32,
       "latest": 572.16,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 26,
@@ -214,7 +214,7 @@
       "y": 11.04,
       "earliest": 204.51,
       "latest": 507.39,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 27,
@@ -222,7 +222,7 @@
       "y": 7.05,
       "earliest": 33.47,
       "latest": 486.95,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 28,
@@ -230,7 +230,7 @@
       "y": 22.69,
       "earliest": 262.76,
       "latest": 452.68,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 29,
@@ -238,7 +238,7 @@
       "y": -16.07,
       "earliest": 273.79,
       "latest": 574.1,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 30,
@@ -246,7 +246,7 @@
       "y": 6.95,
       "earliest": 182.69,
       "latest": 430.57,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 31,
@@ -254,7 +254,7 @@
       "y": 1.97,
       "earliest": 233.59,
       "latest": 506.07,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 32,
@@ -262,7 +262,7 @@
       "y": -8.79,
       "earliest": 5.84,
       "latest": 585.82,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 33,
@@ -270,7 +270,7 @@
       "y": 16.58,
       "earliest": 92.25,
       "latest": 411.59,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 34,
@@ -278,7 +278,7 @@
       "y": 22.35,
       "earliest": 25.7,
       "latest": 497.2,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 35,
@@ -286,7 +286,7 @@
       "y": 13.03,
       "earliest": 229.75,
       "latest": 425.68,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 36,
@@ -294,7 +294,7 @@
       "y": 2.49,
       "earliest": 79.52,
       "latest": 574.49,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 37,
@@ -302,7 +302,7 @@
       "y": -14.41,
       "earliest": 161.79,
       "latest": 545.99,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 38,
@@ -310,7 +310,7 @@
       "y": -9.41,
       "earliest": 298.54,
       "latest": 529.98,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 39,
@@ -318,7 +318,7 @@
       "y": 0.88,
       "earliest": 36.3,
       "latest": 444.94,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 40,
@@ -326,7 +326,7 @@
       "y": 4.42,
       "earliest": 69.03,
       "latest": 444.04,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 41,
@@ -334,7 +334,7 @@
       "y": 6.56,
       "earliest": 68.68,
       "latest": 581.08,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 42,
@@ -342,7 +342,7 @@
       "y": -21.46,
       "earliest": 71.4,
       "latest": 533.8,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 43,
@@ -350,7 +350,7 @@
       "y": -18.38,
       "earliest": 280.65,
       "latest": 514.21,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 44,
@@ -358,7 +358,7 @@
       "y": 14.23,
       "earliest": 242.25,
       "latest": 438.08,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 45,
@@ -366,7 +366,7 @@
       "y": -3.45,
       "earliest": 127.07,
       "latest": 493.4,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 46,
@@ -374,7 +374,7 @@
       "y": 8.67,
       "earliest": 295.25,
       "latest": 419.68,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 47,
@@ -382,7 +382,7 @@
       "y": -8.03,
       "earliest": 258.5,
       "latest": 449.73,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 48,
@@ -390,7 +390,7 @@
       "y": -2.57,
       "earliest": 126.56,
       "latest": 455.71,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 49,
@@ -398,7 +398,7 @@
       "y": 21.16,
       "earliest": 132.94,
       "latest": 572.27,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 50,
@@ -406,7 +406,7 @@
       "y": -22.47,
       "earliest": 299.78,
       "latest": 567.21,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 51,
@@ -414,7 +414,7 @@
       "y": 21.32,
       "earliest": 254.61,
       "latest": 433.26,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 52,
@@ -422,7 +422,7 @@
       "y": -14.31,
       "earliest": 120.31,
       "latest": 411.73,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 53,
@@ -430,7 +430,7 @@
       "y": 24.27,
       "earliest": 79.56,
       "latest": 556.81,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 54,
@@ -438,7 +438,7 @@
       "y": -3.85,
       "earliest": 287.2,
       "latest": 599.08,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 55,
@@ -446,7 +446,7 @@
       "y": 10.92,
       "earliest": 46.44,
       "latest": 459.34,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 56,
@@ -454,7 +454,7 @@
       "y": 3.96,
       "earliest": 162.66,
       "latest": 549.6,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 57,
@@ -462,7 +462,7 @@
       "y": 4.21,
       "earliest": 150.86,
       "latest": 570.54,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 58,
@@ -470,7 +470,7 @@
       "y": 23.04,
       "earliest": 24.03,
       "latest": 437.16,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 59,
@@ -478,7 +478,7 @@
       "y": 8.76,
       "earliest": 70.56,
       "latest": 423.98,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 60,
@@ -486,7 +486,7 @@
       "y": -12.69,
       "earliest": 178.36,
       "latest": 523.88,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 61,
@@ -494,7 +494,7 @@
       "y": 4.18,
       "earliest": 156.83,
       "latest": 586.94,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 62,
@@ -502,7 +502,7 @@
       "y": 10.81,
       "earliest": 71.61,
       "latest": 479.16,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 63,
@@ -510,7 +510,7 @@
       "y": -10.0,
       "earliest": 94.85,
       "latest": 550.37,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 64,
@@ -518,7 +518,7 @@
       "y": -2.09,
       "earliest": 299.54,
       "latest": 599.22,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 65,
@@ -526,7 +526,7 @@
       "y": -14.34,
       "earliest": 79.56,
       "latest": 586.65,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 66,
@@ -534,7 +534,7 @@
       "y": 18.96,
       "earliest": 110.86,
       "latest": 431.55,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 67,
@@ -542,7 +542,7 @@
       "y": 10.18,
       "earliest": 183.5,
       "latest": 597.45,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 68,
@@ -550,7 +550,7 @@
       "y": -24.61,
       "earliest": 245.13,
       "latest": 459.88,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 69,
@@ -558,7 +558,7 @@
       "y": 21.95,
       "earliest": 40.29,
       "latest": 423.09,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 70,
@@ -566,7 +566,7 @@
       "y": 2.66,
       "earliest": 81.7,
       "latest": 520.97,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 71,
@@ -574,7 +574,7 @@
       "y": -14.82,
       "earliest": 190.27,
       "latest": 452.8,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 72,
@@ -582,7 +582,7 @@
       "y": 20.27,
       "earliest": 253.83,
       "latest": 418.46,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 73,
@@ -590,7 +590,7 @@
       "y": -11.17,
       "earliest": 1.06,
       "latest": 554.22,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 74,
@@ -598,7 +598,7 @@
       "y": -11.9,
       "earliest": 222.37,
       "latest": 510.34,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 75,
@@ -606,7 +606,7 @@
       "y": -24.52,
       "earliest": 22.57,
       "latest": 576.62,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 76,
@@ -614,7 +614,7 @@
       "y": 2.28,
       "earliest": 250.38,
       "latest": 516.5,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 77,
@@ -622,7 +622,7 @@
       "y": -18.63,
       "earliest": 92.48,
       "latest": 579.8,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 78,
@@ -630,7 +630,7 @@
       "y": 18.04,
       "earliest": 269.68,
       "latest": 442.02,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 79,
@@ -638,7 +638,7 @@
       "y": -19.86,
       "earliest": 234.03,
       "latest": 576.83,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 80,
@@ -646,7 +646,7 @@
       "y": 6.03,
       "earliest": 46.37,
       "latest": 585.98,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 81,
@@ -654,7 +654,7 @@
       "y": 23.81,
       "earliest": 243.23,
       "latest": 576.28,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 82,
@@ -662,7 +662,7 @@
       "y": 11.83,
       "earliest": 99.66,
       "latest": 586.16,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 83,
@@ -670,7 +670,7 @@
       "y": 18.2,
       "earliest": 243.22,
       "latest": 453.36,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 84,
@@ -678,7 +678,7 @@
       "y": -19.6,
       "earliest": 261.65,
       "latest": 571.72,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 85,
@@ -686,7 +686,7 @@
       "y": 15.83,
       "earliest": 138.09,
       "latest": 461.04,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 86,
@@ -694,7 +694,7 @@
       "y": -13.62,
       "earliest": 7.1,
       "latest": 438.63,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 87,
@@ -702,7 +702,7 @@
       "y": 18.22,
       "earliest": 290.07,
       "latest": 455.82,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 88,
@@ -710,7 +710,7 @@
       "y": -5.02,
       "earliest": 294.34,
       "latest": 507.24,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 89,
@@ -718,7 +718,7 @@
       "y": -19.23,
       "earliest": 291.12,
       "latest": 435.71,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 90,
@@ -726,7 +726,7 @@
       "y": -11.73,
       "earliest": 32.52,
       "latest": 486.91,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 91,
@@ -734,7 +734,7 @@
       "y": -9.32,
       "earliest": 181.86,
       "latest": 502.28,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 92,
@@ -742,7 +742,7 @@
       "y": 3.83,
       "earliest": 76.42,
       "latest": 541.76,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 93,
@@ -750,7 +750,7 @@
       "y": 21.28,
       "earliest": 161.54,
       "latest": 543.89,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 94,
@@ -758,7 +758,7 @@
       "y": 8.53,
       "earliest": 109.27,
       "latest": 413.99,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 95,
@@ -766,7 +766,7 @@
       "y": -8.49,
       "earliest": 94.17,
       "latest": 569.6,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 96,
@@ -774,7 +774,7 @@
       "y": -9.98,
       "earliest": 92.79,
       "latest": 481.68,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 97,
@@ -782,7 +782,7 @@
       "y": -10.22,
       "earliest": 38.19,
       "latest": 484.09,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 98,
@@ -790,7 +790,7 @@
       "y": 8.87,
       "earliest": 270.84,
       "latest": 523.1,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 99,
@@ -798,7 +798,7 @@
       "y": 2.4,
       "earliest": 0.12,
       "latest": 457.38,
-      "service_time": 10
+      "service_time": 0
     },
     {
       "id": 100,
@@ -806,7 +806,7 @@
       "y": 4.0,
       "earliest": 196.41,
       "latest": 493.0,
-      "service_time": 10
+      "service_time": 0
     }
   ],
   "traffic_conditions": [
