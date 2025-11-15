@@ -1,7 +1,6 @@
 import json
 import math
 import time
-from typing import List, Dict, Tuple
 from dataclasses import dataclass
 
 # ============================================================================
@@ -469,7 +468,7 @@ def main():
     print("FAST ROUTE OPTIMIZATION SYSTEM")
     print("="*60)
     
-    input_file = "traffic_data/delivery_100nodes.json"
+    input_file = "data_100nodes.json"
     output_file = "output_data/optimized_route.json"
     
     try:
