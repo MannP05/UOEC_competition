@@ -1,10 +1,8 @@
 import json
 import math
 import time
-from typing import List, Dict, Tuple, Optional, Set
+from typing import List, Dict, Tuple, Set
 from dataclasses import dataclass
-from copy import deepcopy
-import heapq
 
 @dataclass
 class DeliveryPoint:
@@ -12,122 +10,114 @@ class DeliveryPoint:
     id: int
     x: float
     y: float
-    earliest: float  # Earliest arrival time
-    latest: float    # Latest arrival time
-    service_time: float = 1  # Time spent at location (minutes)
+    earliest: float
+    latest: float
+    service_time: float = 5.0
 
 @dataclass
 class TrafficCondition:
     """Represents traffic conditions between two points"""
     from_id: int
     to_id: int
-    speed_factor: float  # 1.0 = normal, 0.5 = slow (congestion), 2.0 = fast
-    delay: float = 0.0   # Additional delay in minutes
+    speed_factor: float
+    delay: float = 0.0
 
-class RouteOptimizer:
+class FastRouteOptimizer:
     """
-    Main route optimization engine using:
-    - Nearest Neighbor construction heuristic with ALL nodes guarantee
-    - 2-opt local search improvement
-    - Time window feasibility checking
-    - Dynamic traffic adaptation
+    Optimized route optimizer for 100 nodes in under 5 seconds
+    Key optimizations:
+    - Efficient nearest neighbor construction
+    - Limited 2-opt iterations
+    - Smart evaluation caching
+    - Adaptive algorithm selection based on problem size
     """
     
     def __init__(self, 
                  delivery_points: List[DeliveryPoint], 
                  traffic_conditions: Dict[Tuple[int, int], TrafficCondition],
                  depot_id: int = 0,
-                 base_speed: float = 40.0):  # km/h
+                 base_speed: float = 40.0):
         
         self.points = {p.id: p for p in delivery_points}
         self.traffic = traffic_conditions
         self.depot_id = depot_id
         self.base_speed = base_speed
         
-        # Caching for performance
-        self.distance_cache = {}
-        self.time_cache = {}
-        
-        # Pre-calculate all distances
+        # Pre-compute distance matrix
+        self.distance_matrix = {}
         self._precompute_distances()
+        
+        # Problem size for adaptive algorithms
+        self.n = len(delivery_points) - 1  # Exclude depot
     
     def _precompute_distances(self):
-        """Pre-compute all pairwise distances for faster lookup"""
-        point_list = list(self.points.values())
-        for i, p1 in enumerate(point_list):
-            for p2 in point_list[i:]:
-                dist = math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2)
-                self.distance_cache[(p1.id, p2.id)] = dist
-                self.distance_cache[(p2.id, p1.id)] = dist
+        """Pre-compute all pairwise distances"""
+        ids = list(self.points.keys())
+        for i in ids:
+            p1 = self.points[i]
+            for j in ids:
+                if i <= j:
+                    p2 = self.points[j]
+                    dist = math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2)
+                    self.distance_matrix[(i, j)] = dist
+                    self.distance_matrix[(j, i)] = dist
     
     def get_distance(self, id1: int, id2: int) -> float:
         """Get Euclidean distance between two points"""
-        return self.distance_cache.get((id1, id2), 0.0)
+        return self.distance_matrix.get((id1, id2), 0.0)
     
-    def calculate_travel_time(self, from_id: int, to_id: int, current_time: float) -> float:
+    def calculate_travel_time(self, from_id: int, to_id: int) -> float:
         """Calculate travel time considering traffic conditions"""
         distance = self.get_distance(from_id, to_id)
         
-        # Check for specific traffic condition
         traffic_key = (from_id, to_id)
         if traffic_key in self.traffic:
             traffic = self.traffic[traffic_key]
             speed = self.base_speed * traffic.speed_factor
-            travel_time = (distance / speed) * 60 + traffic.delay  # Convert to minutes
+            travel_time = (distance / speed) * 60 + traffic.delay
         else:
             travel_time = (distance / self.base_speed) * 60
         
         return travel_time
     
-    def evaluate_route(self, route: List[int], start_time: float = 0.0, 
-                      penalize_violations: bool = False) -> Tuple[List[float], float, bool]:
+    def evaluate_route_fast(self, route: List[int], start_time: float = 0.0) -> Tuple[float, bool, List[float]]:
         """
-        Evaluate a route and return arrival times, total time, and feasibility
-        Returns: (arrival_times, total_completion_time, is_feasible)
-        
-        If penalize_violations=True, allows time window violations but adds penalty
+        Fast route evaluation
+        Returns: (total_time, is_feasible, arrival_times)
         """
         if not route:
-            return [], 0.0, True
+            return 0.0, True, []
         
         arrival_times = []
         current_time = start_time
         current_id = self.depot_id
         is_feasible = True
-        penalty = 0.0
         
         for node_id in route:
-            # Calculate travel time from current position
-            travel_time = self.calculate_travel_time(current_id, node_id, current_time)
+            travel_time = self.calculate_travel_time(current_id, node_id)
             current_time += travel_time
             
             point = self.points[node_id]
             
-            # Wait if we arrive too early
+            # Wait if too early
             if current_time < point.earliest:
                 current_time = point.earliest
             
-            # Check if we're too late
+            # Check if too late
             if current_time > point.latest:
-                if penalize_violations:
-                    penalty += (current_time - point.latest) * 100  # Heavy penalty
-                    is_feasible = False
-                else:
-                    return arrival_times, float('inf'), False
+                is_feasible = False
+                # Continue anyway for partial evaluation
             
             arrival_times.append(current_time)
-            
-            # Add service time
             current_time += point.service_time
             current_id = node_id
         
-        total_time = current_time + penalty
-        return arrival_times, total_time, is_feasible
+        return current_time, is_feasible, arrival_times
     
-    def nearest_neighbor_construction(self, start_time: float = 0.0, 
-                                     must_visit_all: bool = True) -> List[int]:
+    def fast_nearest_neighbor(self, start_time: float = 0.0) -> List[int]:
         """
-        Build initial route using nearest neighbor - GUARANTEES ALL NODES VISITED
+        Fast nearest neighbor heuristic with time window awareness
+        Optimized for speed
         """
         unvisited = set(self.points.keys()) - {self.depot_id}
         route = []
@@ -138,52 +128,30 @@ class RouteOptimizer:
             best_next = None
             best_score = float('inf')
             best_arrival = None
-            best_is_feasible = False
             
+            # Quick scan for best feasible option
             for next_id in unvisited:
-                next_point = self.points[next_id]
-                travel_time = self.calculate_travel_time(current_id, next_id, current_time)
-                arrival_time = current_time + travel_time
+                point = self.points[next_id]
+                travel_time = self.calculate_travel_time(current_id, next_id)
+                arrival_time = max(current_time + travel_time, point.earliest)
                 
-                # Adjust for time window
-                actual_arrival = max(arrival_time, next_point.earliest)
+                # Simple scoring: distance + time window urgency
+                distance = self.get_distance(current_id, next_id)
                 
-                # Check feasibility
-                is_feasible = actual_arrival <= next_point.latest
-                
-                # Calculate score
-                distance_score = self.get_distance(current_id, next_id)
-                
-                if is_feasible:
-                    # Prefer feasible nodes with tight time windows
-                    time_urgency = next_point.latest - actual_arrival
-                    slack_penalty = 1.0 / (time_urgency + 1)
-                    score = distance_score * (1 + slack_penalty)
+                if arrival_time <= point.latest:
+                    # Feasible
+                    urgency = 1.0 / (point.latest - arrival_time + 1)
+                    score = distance * (1 + urgency)
                 else:
-                    # For infeasible nodes, use distance + lateness penalty
-                    lateness = actual_arrival - next_point.latest
-                    score = distance_score + lateness * 10
+                    # Infeasible - heavy penalty
+                    lateness = arrival_time - point.latest
+                    score = distance + lateness * 1000
                 
-                # Prefer feasible over infeasible
-                if best_next is None:
-                    best_next = next_id
+                if score < best_score:
                     best_score = score
-                    best_arrival = actual_arrival
-                    best_is_feasible = is_feasible
-                elif is_feasible and not best_is_feasible:
-                    # Always prefer feasible over infeasible
                     best_next = next_id
-                    best_score = score
-                    best_arrival = actual_arrival
-                    best_is_feasible = is_feasible
-                elif is_feasible == best_is_feasible and score < best_score:
-                    # Among same feasibility, prefer better score
-                    best_next = next_id
-                    best_score = score
-                    best_arrival = actual_arrival
-                    best_is_feasible = is_feasible
+                    best_arrival = arrival_time
             
-            # ALWAYS add a node (guarantee all nodes visited)
             if best_next is not None:
                 route.append(best_next)
                 unvisited.remove(best_next)
@@ -192,193 +160,199 @@ class RouteOptimizer:
         
         return route
     
-    def cheapest_insertion(self, start_time: float = 0.0) -> List[int]:
+    def savings_algorithm(self, start_time: float = 0.0) -> List[int]:
         """
-        Alternative construction: cheapest insertion heuristic
-        Guarantees all nodes are visited
+        Clarke-Wright Savings Algorithm - fast construction heuristic
+        Good for larger instances
         """
-        unvisited = set(self.points.keys()) - {self.depot_id}
+        nodes = list(self.points.keys())
+        nodes.remove(self.depot_id)
         
-        if not unvisited:
-            return []
+        # Calculate savings for merging routes
+        savings = []
+        for i in range(len(nodes)):
+            for j in range(i + 1, len(nodes)):
+                ni, nj = nodes[i], nodes[j]
+                save = (self.get_distance(self.depot_id, ni) + 
+                       self.get_distance(self.depot_id, nj) - 
+                       self.get_distance(ni, nj))
+                savings.append((save, ni, nj))
         
-        # Start with nearest node to depot
-        first_node = min(unvisited, key=lambda x: self.get_distance(self.depot_id, x))
-        route = [first_node]
-        unvisited.remove(first_node)
+        # Sort by savings (descending)
+        savings.sort(reverse=True, key=lambda x: x[0])
         
-        # Insert remaining nodes
-        while unvisited:
-            best_node = None
-            best_position = 0
-            best_cost = float('inf')
+        # Build routes
+        routes = {node: [node] for node in nodes}
+        route_of = {node: node for node in nodes}
+        
+        for save, ni, nj in savings:
+            ri, rj = route_of[ni], route_of[nj]
             
-            for node in unvisited:
-                # Try inserting at each position
-                for pos in range(len(route) + 1):
-                    test_route = route[:pos] + [node] + route[pos:]
-                    _, cost, _ = self.evaluate_route(test_route, start_time, penalize_violations=True)
-                    
-                    if cost < best_cost:
-                        best_cost = cost
-                        best_node = node
-                        best_position = pos
-            
-            # Insert the best node
-            if best_node is not None:
-                route.insert(best_position, best_node)
-                unvisited.remove(best_node)
+            if ri != rj:
+                # Check if we can merge
+                route_i = routes[ri]
+                route_j = routes[rj]
+                
+                # Only merge if nodes are at ends of routes
+                if (route_i[-1] == ni and route_j[0] == nj):
+                    merged = route_i + route_j
+                elif (route_i[-1] == ni and route_j[-1] == nj):
+                    merged = route_i + route_j[::-1]
+                elif (route_i[0] == ni and route_j[0] == nj):
+                    merged = route_i[::-1] + route_j
+                elif (route_i[0] == ni and route_j[-1] == nj):
+                    merged = route_j + route_i
+                else:
+                    continue
+                
+                # Check feasibility
+                _, feasible, _ = self.evaluate_route_fast(merged, start_time)
+                
+                if feasible or len(routes) > 2:  # Allow if reduces number of routes
+                    routes[ri] = merged
+                    del routes[rj]
+                    for node in merged:
+                        route_of[node] = ri
         
-        return route
+        # Return the single route (or best if multiple)
+        best_route = min(routes.values(), key=lambda r: self.evaluate_route_fast(r, start_time)[0])
+        return best_route
     
-    def two_opt_improvement(self, route: List[int], start_time: float = 0.0, 
-                           max_iterations: int = 500) -> List[int]:
+    def limited_2opt(self, route: List[int], start_time: float = 0.0, 
+                    max_iterations: int = 100, max_no_improve: int = 20) -> List[int]:
         """
-        Improve route using 2-opt local search
+        Fast 2-opt with strict limits for large instances
         """
         if len(route) <= 3:
             return route
         
         best_route = route[:]
-        _, best_time, _ = self.evaluate_route(best_route, start_time, penalize_violations=True)
+        best_time, _, _ = self.evaluate_route_fast(best_route, start_time)
         
-        improved = True
         iterations = 0
+        no_improve_count = 0
         
-        while improved and iterations < max_iterations:
+        # Adaptive neighborhood based on problem size
+        if self.n > 50:
+            max_gap = 15
+        elif self.n > 30:
+            max_gap = 20
+        else:
+            max_gap = 30
+        
+        while iterations < max_iterations and no_improve_count < max_no_improve:
             improved = False
             iterations += 1
             
             for i in range(len(best_route) - 1):
-                for j in range(i + 2, min(i + 20, len(best_route))):  # Limited neighborhood
-                    # Reverse segment between i and j
+                if improved:
+                    break
+                    
+                for j in range(i + 2, min(i + max_gap, len(best_route))):
+                    # Reverse segment
                     new_route = best_route[:i+1] + best_route[i+1:j+1][::-1] + best_route[j+1:]
                     
-                    _, new_time, _ = self.evaluate_route(new_route, start_time, penalize_violations=True)
+                    new_time, feasible, _ = self.evaluate_route_fast(new_route, start_time)
                     
-                    if new_time < best_time:
+                    # Accept if better and feasible (or both infeasible but better)
+                    if feasible and new_time < best_time:
                         best_route = new_route
                         best_time = new_time
                         improved = True
+                        no_improve_count = 0
                         break
-                
-                if improved:
-                    break
+            
+            if not improved:
+                no_improve_count += 1
         
         return best_route
     
-    def or_opt_improvement(self, route: List[int], start_time: float = 0.0) -> List[int]:
+    def optimize_route(self, start_time: float = 0.0, time_limit: float = 4.8) -> Dict:
         """
-        Or-opt improvement: relocate sequences of 1, 2, or 3 consecutive nodes
+        Main optimization with adaptive strategy based on problem size
         """
-        if len(route) <= 3:
-            return route
+        opt_start = time.time()
         
-        best_route = route[:]
-        _, best_time, _ = self.evaluate_route(best_route, start_time, penalize_violations=True)
+        print(f"  Problem size: {self.n} nodes")
         
-        improved = True
-        while improved:
-            improved = False
+        # PHASE 1: CONSTRUCTION (30% of time budget)
+        construction_time_limit = time_limit * 0.3
+        
+        # Choose construction method based on size
+        if self.n <= 30:
+            # Small: try multiple methods
+            print("  Using: Nearest Neighbor + Savings")
+            route1 = self.fast_nearest_neighbor(start_time)
+            time1, feas1, _ = self.evaluate_route_fast(route1, start_time)
             
-            # Try moving sequences of length 1, 2, 3
-            for seq_len in [1, 2, 3]:
-                if len(best_route) < seq_len + 1:
-                    continue
-                
-                for i in range(len(best_route) - seq_len + 1):
-                    # Extract sequence
-                    sequence = best_route[i:i+seq_len]
-                    remaining = best_route[:i] + best_route[i+seq_len:]
-                    
-                    # Try inserting at each position
-                    for j in range(len(remaining) + 1):
-                        new_route = remaining[:j] + sequence + remaining[j:]
-                        _, new_time, _ = self.evaluate_route(new_route, start_time, penalize_violations=True)
-                        
-                        if new_time < best_time:
-                            best_route = new_route
-                            best_time = new_time
-                            improved = True
-                            break
-                    
-                    if improved:
-                        break
-                
-                if improved:
-                    break
-        
-        return best_route
-    
-    def optimize_route(self, start_time: float = 0.0, 
-                      time_limit: float = 4.5) -> Dict:
-        """
-        Main optimization function with multiple strategies
-        GUARANTEES ALL NODES ARE VISITED
-        """
-        optimization_start = time.time()
-        
-        # Try both construction methods
-        route1 = self.nearest_neighbor_construction(start_time)
-        _, time1, _ = self.evaluate_route(route1, start_time, penalize_violations=True)
-        
-        # For smaller instances, try cheapest insertion too
-        if len(self.points) <= 50 and (time.time() - optimization_start) < time_limit * 0.3:
-            route2 = self.cheapest_insertion(start_time)
-            _, time2, _ = self.evaluate_route(route2, start_time, penalize_violations=True)
+            route2 = self.savings_algorithm(start_time)
+            time2, feas2, _ = self.evaluate_route_fast(route2, start_time)
             
-            if time2 < time1:
+            # Pick better
+            if feas1 and feas2:
+                route = route1 if time1 < time2 else route2
+            elif feas1:
+                route = route1
+            elif feas2:
                 route = route2
             else:
-                route = route1
+                route = route1 if time1 < time2 else route2
+        
+        elif self.n <= 60:
+            # Medium: Savings algorithm (better quality)
+            print("  Using: Savings Algorithm")
+            route = self.savings_algorithm(start_time)
+        
         else:
-            route = route1
+            # Large: Fast nearest neighbor only
+            print("  Using: Fast Nearest Neighbor")
+            route = self.fast_nearest_neighbor(start_time)
         
-        # Verify all nodes are in route
-        expected_nodes = set(self.points.keys()) - {self.depot_id}
-        actual_nodes = set(route)
-        
-        if expected_nodes != actual_nodes:
-            print(f"⚠️  WARNING: Missing nodes: {expected_nodes - actual_nodes}")
-            # Add missing nodes at the end
-            missing = list(expected_nodes - actual_nodes)
+        # Verify all nodes visited
+        expected = set(self.points.keys()) - {self.depot_id}
+        if set(route) != expected:
+            missing = list(expected - set(route))
             route.extend(missing)
+            print(f"  Added {len(missing)} missing nodes")
         
-        arrival_times, total_time, feasible = self.evaluate_route(route, start_time, penalize_violations=False)
+        total_time, feasible, arrival_times = self.evaluate_route_fast(route, start_time)
+        print(f"  Initial: time={total_time:.1f}, feasible={feasible}")
         
-        # Phase 2: 2-opt Improvement
-        elapsed = time.time() - optimization_start
-        if elapsed < time_limit * 0.6:
-            route = self.two_opt_improvement(route, start_time)
-            arrival_times, total_time, feasible = self.evaluate_route(route, start_time, penalize_violations=False)
+        # PHASE 2: IMPROVEMENT (60% of time budget)
+        elapsed = time.time() - opt_start
         
-        # Phase 3: Or-opt improvement for smaller instances
-        elapsed = time.time() - optimization_start
-        if elapsed < time_limit * 0.8 and len(route) < 50:
-            route = self.or_opt_improvement(route, start_time)
-            arrival_times, total_time, feasible = self.evaluate_route(route, start_time, penalize_violations=False)
+        if elapsed < time_limit * 0.6 and feasible:
+            # Adaptive iterations based on problem size
+            if self.n > 70:
+                max_iter = 50
+            elif self.n > 50:
+                max_iter = 100
+            else:
+                max_iter = 200
+            
+            print(f"  Running 2-opt (max {max_iter} iterations)...")
+            route = self.limited_2opt(route, start_time, max_iterations=max_iter)
+            total_time, feasible, arrival_times = self.evaluate_route_fast(route, start_time)
+            print(f"  After 2-opt: time={total_time:.1f}, feasible={feasible}")
         
-        computation_time = time.time() - optimization_start
+        computation_time = time.time() - opt_start
         
-        # Final verification
-        visited_count = len(route)
-        expected_count = len(self.points) - 1  # Excluding depot
-        
-        # Prepare detailed output
+        # Build result
         result = {
             "route": [self.depot_id] + route,
             "delivery_sequence": route,
             "delivery_times": {},
             "time_windows": {},
-            "total_time_minutes": round(total_time, 2),
+            "total_time_minutes": round(total_time if total_time != float('inf') else -1, 2),
             "computation_time_seconds": round(computation_time, 4),
             "num_deliveries": len(route),
-            "expected_deliveries": expected_count,
-            "all_nodes_visited": visited_count == expected_count,
+            "expected_deliveries": self.n,
+            "all_nodes_visited": len(route) == self.n,
             "feasible": feasible,
             "depot_id": self.depot_id
         }
         
+        # Add detailed times
         for i, node_id in enumerate(route):
             point = self.points[node_id]
             if i < len(arrival_times):
@@ -394,47 +368,131 @@ class RouteOptimizer:
         return result
     
     def update_traffic(self, new_traffic: Dict[Tuple[int, int], TrafficCondition]):
-        """Update traffic conditions for real-time adaptation"""
+        """Update traffic conditions"""
         self.traffic = new_traffic
-        self.time_cache.clear()
-        print(f"Traffic updated: {len(new_traffic)} conditions loaded")
     
-    def reoptimize_from_position(self, current_node: int, 
-                                 completed: Set[int], 
+    def reoptimize_from_position(self, current_node: int, completed: Set[int], 
                                  current_time: float) -> Dict:
-        """
-        Re-optimize remaining route from current position
-        Used for dynamic re-routing during delivery
-        """
-        # Create temporary instance with remaining points
+        """Re-optimize remaining deliveries"""
         remaining_points = [p for p in self.points.values() 
                           if p.id not in completed and p.id != self.depot_id]
         
         if not remaining_points:
-            return {"route": [current_node], "delivery_times": {}, 
-                   "total_time_minutes": 0, "num_deliveries": 0}
+            return {"route": [current_node], "num_deliveries": 0, "total_time_minutes": 0}
         
-        # Temporarily adjust depot
-        temp_optimizer = RouteOptimizer(
+        temp_optimizer = FastRouteOptimizer(
             delivery_points=remaining_points,
             traffic_conditions=self.traffic,
             depot_id=current_node,
             base_speed=self.base_speed
         )
         
-        result = temp_optimizer.optimize_route(current_time)
+        result = temp_optimizer.optimize_route(current_time, time_limit=2.0)
         result["reoptimized"] = True
-        result["reoptimization_point"] = current_node
-        
         return result
 
 
+def create_feasible_input(filename: str, num_points: int = 20):
+    """
+    Generate input with GUARANTEED feasible time windows
+    Uses TSP nearest neighbor to estimate realistic sequence
+    """
+    import random
+    random.seed(42)
+    
+    city_size = 50
+    base_speed = 40.0
+    
+    print(f"\nGenerating feasible instance with {num_points} nodes...")
+    
+    # Generate locations
+    locations = [(0, 0.0, 0.0)]  # Depot
+    for i in range(1, num_points + 1):
+        x = round(random.uniform(-city_size/2, city_size/2), 2)
+        y = round(random.uniform(-city_size/2, city_size/2), 2)
+        locations.append((i, x, y))
+    
+    # Build a reasonable tour using nearest neighbor
+    unvisited = set(range(1, num_points + 1))
+    sequence = [0]
+    current = 0
+    
+    while unvisited:
+        nearest = min(unvisited, key=lambda i: 
+                     math.sqrt((locations[i][1] - locations[current][1])**2 + 
+                              (locations[i][2] - locations[current][2])**2))
+        sequence.append(nearest)
+        unvisited.remove(nearest)
+        current = nearest
+    
+    # Assign time windows based on this sequence
+    delivery_points = []
+    cumulative_time = 0
+    
+    for idx, node_id in enumerate(sequence):
+        nid, x, y = locations[node_id]
+        
+        # Calculate travel time from previous
+        if idx > 0:
+            prev_id = sequence[idx - 1]
+            _, px, py = locations[prev_id]
+            dist = math.sqrt((x - px)**2 + (y - py)**2)
+            travel = (dist / base_speed) * 60
+            cumulative_time += travel
+        
+        service = 10 if node_id > 0 else 0
+        
+        # Set generous time windows
+        buffer = 100 + num_points  # Scales with problem size
+        earliest = max(0, cumulative_time - buffer)
+        latest = cumulative_time + buffer + 500
+        
+        delivery_points.append({
+            "id": nid,
+            "x": x,
+            "y": y,
+            "earliest": round(earliest, 2),
+            "latest": round(latest, 2),
+            "service_time": service
+        })
+        
+        cumulative_time += service
+    
+    # Light traffic
+    traffic_conditions = []
+    num_traffic = min(30, num_points)
+    
+    for _ in range(num_traffic):
+        from_id = random.randint(0, num_points)
+        to_id = random.randint(0, num_points)
+        if from_id != to_id:
+            traffic_conditions.append({
+                "from_id": from_id,
+                "to_id": to_id,
+                "speed_factor": round(random.uniform(0.85, 1.15), 2),
+                "delay": round(random.uniform(0, 2), 2)
+            })
+    
+    data = {
+        "delivery_points": delivery_points,
+        "traffic_conditions": traffic_conditions,
+        "config": {"depot_id": 0, "base_speed": 40.0, "start_time": 0}
+    }
+    
+    with open(filename, 'w') as f:
+        json.dump(data, f, indent=2)
+    
+    print(f"✓ Created: {filename}")
+    print(f"  Estimated min time: {cumulative_time:.1f} minutes")
+    print(f"  Time windows: generous (±{buffer}+ minutes)")
+    print(f"  FEASIBILITY: Guaranteed")
+
+
 def load_from_json(json_file: str) -> Tuple[List[DeliveryPoint], Dict, Dict]:
-    """Load delivery data from JSON file"""
+    """Load delivery data from JSON"""
     with open(json_file, 'r') as f:
         data = json.load(f)
     
-    # Parse delivery points
     delivery_points = []
     for point in data.get('delivery_points', []):
         dp = DeliveryPoint(
@@ -442,12 +500,11 @@ def load_from_json(json_file: str) -> Tuple[List[DeliveryPoint], Dict, Dict]:
             x=point['x'],
             y=point['y'],
             earliest=point.get('earliest', 0),
-            latest=point.get('latest', 1440),
+            latest=point.get('latest', 10000),
             service_time=point.get('service_time', 5)
         )
         delivery_points.append(dp)
     
-    # Parse traffic conditions
     traffic_conditions = {}
     for traffic in data.get('traffic_conditions', []):
         key = (traffic['from_id'], traffic['to_id'])
@@ -469,222 +526,77 @@ def load_from_json(json_file: str) -> Tuple[List[DeliveryPoint], Dict, Dict]:
 
 
 def save_result_to_json(result: Dict, output_file: str):
-    """Save optimization result to JSON file"""
+    """Save results to JSON"""
     with open(output_file, 'w') as f:
         json.dump(result, f, indent=2)
-    print(f"Results saved to {output_file}")
-
-
-def create_sample_input(filename: str, num_points: int = 20):
-    """Create a sample input JSON file for testing - WITH FEASIBLE TIME WINDOWS"""
-    import random
-    random.seed(42)
-    
-    city_size = 50  # km x km city
-    
-    delivery_points = []
-    
-    # Depot at center
-    delivery_points.append({
-        "id": 0,
-        "x": 0.0,
-        "y": 0.0,
-        "earliest": 0,
-        "latest": 2000,  # Extended for feasibility
-        "service_time": 0
-    })
-    
-    # Generate random delivery points with RELAXED time windows
-    for i in range(1, num_points + 1):
-        x = round(random.uniform(-city_size/2, city_size/2), 2)
-        y = round(random.uniform(-city_size/2, city_size/2), 2)
-        
-        # More relaxed time windows to ensure feasibility
-        earliest = random.uniform(0, 200)
-        time_window_size = random.uniform(300, 800)  # Larger windows
-        
-        delivery_points.append({
-            "id": i,
-            "x": x,
-            "y": y,
-            "earliest": round(earliest, 2),
-            "latest": round(earliest + time_window_size, 2),
-            "service_time": round(random.uniform(5, 15), 2)
-        })
-    
-    # Generate random traffic conditions
-    traffic_conditions = []
-    num_traffic = min(50, num_points * 2)
-    
-    for _ in range(num_traffic):
-        from_id = random.randint(0, num_points)
-        to_id = random.randint(0, num_points)
-        
-        if from_id != to_id:
-            traffic_conditions.append({
-                "from_id": from_id,
-                "to_id": to_id,
-                "speed_factor": round(random.uniform(0.7, 1.3), 2),
-                "delay": round(random.uniform(0, 5), 2)
-            })
-    
-    data = {
-        "delivery_points": delivery_points,
-        "traffic_conditions": traffic_conditions,
-        "config": {
-            "depot_id": 0,
-            "base_speed": 40.0,
-            "start_time": 0
-        }
-    }
-    
-    with open(filename, 'w') as f:
-        json.dump(data, f, indent=2)
-    
-    print(f"Sample input file created: {filename}")
-    print(f"  - {len(delivery_points)} delivery points (including depot)")
-    print(f"  - {num_points} deliveries required")
-    print(f"  - {len(traffic_conditions)} traffic conditions")
-
-
-def demonstrate_dynamic_reoptimization(optimizer: RouteOptimizer, initial_result: Dict):
-    """
-    Demonstrate dynamic re-optimization capability
-    Simulates traffic change mid-route
-    """
-    print("\n" + "="*60)
-    print("DYNAMIC RE-OPTIMIZATION DEMONSTRATION")
-    print("="*60)
-    
-    route = initial_result['delivery_sequence']
-    
-    if len(route) < 5:
-        print("Route too short for demonstration")
-        return
-    
-    # Simulate: completed 30% of deliveries
-    completed_count = max(1, len(route) // 3)
-    completed = set(route[:completed_count])
-    current_node = route[completed_count - 1]
-    current_time = initial_result['delivery_times'][f'node_{current_node}']
-    
-    print(f"\nSimulating delivery in progress...")
-    print(f"  Completed deliveries: {completed_count}/{len(route)}")
-    print(f"  Current position: Node {current_node}")
-    print(f"  Current time: {current_time:.2f} minutes")
-    
-    # Simulate traffic change
-    print(f"\n⚠️  Traffic conditions changed!")
-    import random
-    new_traffic = {}
-    for (from_id, to_id), tc in optimizer.traffic.items():
-        # Randomly worsen or improve traffic
-        new_factor = tc.speed_factor * random.uniform(0.7, 1.3)
-        new_traffic[(from_id, to_id)] = TrafficCondition(
-            from_id=from_id,
-            to_id=to_id,
-            speed_factor=new_factor,
-            delay=tc.delay * random.uniform(0.8, 1.5)
-        )
-    
-    optimizer.update_traffic(new_traffic)
-    
-    # Re-optimize
-    print(f"\nRe-optimizing remaining route...")
-    new_result = optimizer.reoptimize_from_position(current_node, completed, current_time)
-    
-    print(f"\n✓ Re-optimization complete!")
-    print(f"  New route: {new_result['route'][:10]}..." if len(new_result['route']) > 10 else f"  New route: {new_result['route']}")
-    print(f"  Remaining deliveries: {new_result['num_deliveries']}")
-    print(f"  Estimated completion: {new_result['total_time_minutes']:.2f} minutes")
 
 
 def main():
-    """Main execution function"""
+    """Main execution"""
     print("="*60)
-    print("REAL-TIME ROUTE OPTIMIZATION SYSTEM")
+    print("FAST ROUTE OPTIMIZATION SYSTEM")
+    print("Performance Target: <5 seconds for 100 nodes")
     print("="*60)
     
-    input_file = "delivery_w0nodes.json"
+    input_file = "delivery_1000nodes.json"
     output_file = "optimized_route.json"
     
-    # Create sample input if file doesn't exist
+    # Check for input file
     try:
         with open(input_file, 'r') as f:
             pass
     except FileNotFoundError:
-        print(f"\nInput file not found. Creating sample data...")
-        num_points = int(input("Enter number of delivery points (default 20, max 100): ") or "20")
+        num_points = int(input("\nEnter number of delivery points [100]: ") or "100")
         num_points = min(max(num_points, 5), 100)
-        create_sample_input(input_file, num_points)
-        print()
+        create_feasible_input(input_file, num_points)
     
     # Load data
-    print(f"\nLoading data from {input_file}...")
+    print(f"\nLoading: {input_file}")
     delivery_points, traffic_conditions, config = load_from_json(input_file)
     
-    print(f"✓ Loaded {len(delivery_points)} delivery points (including depot)")
-    print(f"✓ Deliveries required: {len(delivery_points) - 1}")
-    print(f"✓ Loaded {len(traffic_conditions)} traffic conditions")
+    print(f"✓ {len(delivery_points)} points ({len(delivery_points)-1} deliveries)")
+    print(f"✓ {len(traffic_conditions)} traffic conditions")
     
-    # Create optimizer
-    print(f"\nInitializing optimizer...")
-    optimizer = RouteOptimizer(
+    # Optimize
+    print(f"\n{'='*60}")
+    print("OPTIMIZING...")
+    print('='*60)
+    
+    optimizer = FastRouteOptimizer(
         delivery_points=delivery_points,
         traffic_conditions=traffic_conditions,
         depot_id=config.get('depot_id', 0),
         base_speed=config.get('base_speed', 40.0)
     )
     
-    # Run optimization
-    print(f"\nOptimizing route...")
     start_time = config.get('start_time', 0)
     result = optimizer.optimize_route(start_time)
     
     # Display results
-    print("\n" + "="*60)
-    print("OPTIMIZATION RESULTS")
-    print("="*60)
+    print(f"\n{'='*60}")
+    print("RESULTS")
+    print('='*60)
+    print(f"✓ All nodes visited: {result['all_nodes_visited']}")
+    print(f"✓ Feasible: {result['feasible']}")
+    print(f"✓ Total time: {result['total_time_minutes']} minutes")
+    print(f"✓ Computation: {result['computation_time_seconds']} seconds")
+    print(f"✓ Performance: {'PASS ✓' if result['computation_time_seconds'] < 5.0 else 'FAIL ✗'}")
     
-    print(f"\n📊 Statistics:")
-    print(f"   Expected deliveries: {result['expected_deliveries']}")
-    print(f"   Actual deliveries: {result['num_deliveries']}")
-    print(f"   All nodes visited: {'✓ YES' if result['all_nodes_visited'] else '✗ NO'}")
-    print(f"   Total time: {result['total_time_minutes']:.2f} minutes")
-    print(f"   Time windows feasible: {'✓ Yes' if result['feasible'] else '✗ No (some violations)'}")
-    print(f"   Computation time: {result['computation_time_seconds']:.4f} seconds")
+    # Show route preview
+    route_preview = result['route'][:15]
+    print(f"\nRoute: {' → '.join(map(str, route_preview))} ... ({len(result['route'])} total)")
     
-    print(f"\n📍 Route Sequence (first 20 nodes):")
-    route_display = result['route'][:21]
-    print(f"   {' → '.join(map(str, route_display))}" + 
-          (f" → ... ({len(result['route']) - 21} more)" if len(result['route']) > 21 else ""))
+    # Count violations
+    violations = sum(1 for tw in result['time_windows'].values() if tw.get('violated', False))
+    print(f"Time window violations: {violations}/{result['num_deliveries']}")
     
-    print(f"\n📅 Delivery Schedule (first 10):")
-    violations = 0
-    for i, node_id in enumerate(result['delivery_sequence'][:10]):
-        info = result['time_windows'][f'node_{node_id}']
-        violation_mark = "⚠️" if info.get('violated', False) else "✓"
-        print(f"   {violation_mark} Node {node_id}: "
-              f"Arrive {info['arrival']:.1f} min "
-              f"(Window: {info['earliest']:.0f}-{info['latest']:.0f}, "
-              f"Slack: {info['slack']:.1f} min)")
-        if info.get('violated', False):
-            violations += 1
-    
-    if len(result['delivery_sequence']) > 10:
-        print(f"   ... and {len(result['delivery_sequence']) - 10} more deliveries")
-    
-    # Count total violations
-    total_violations = sum(1 for info in result['time_windows'].values() if info.get('violated', False))
-    if total_violations > 0:
-        print(f"\n⚠️  Total time window violations: {total_violations}/{result['num_deliveries']}")
-    
-    # Save results
+    # Save
     save_result_to_json(result, output_file)
+    print(f"\n✓ Saved to: {output_file}")
     
-    print("\n" + "="*60)
-    print("OPTIMIZATION COMPLETE")
-    print("="*60)
+    print(f"\n{'='*60}")
+    print("COMPLETE")
+    print('='*60)
 
 
 if __name__ == "__main__":
