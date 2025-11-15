@@ -14,7 +14,7 @@ class DeliveryPoint:
     y: float
     earliest: float  # Earliest arrival time
     latest: float    # Latest arrival time
-    service_time: float = 5.0  # Time spent at location (minutes)
+    service_time: float = 1  # Time spent at location (minutes)
 
 @dataclass
 class TrafficCondition:
