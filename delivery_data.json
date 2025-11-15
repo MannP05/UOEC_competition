@@ -1,0 +1,33 @@
+{
+  "delivery_points": [
+    {
+      "id": 0,
+      "x": 0.0,
+      "y": 0.0,
+      "earliest": 0,
+      "latest": 1440,
+      "service_time": 0
+    },
+    {
+      "id": 1,
+      "x": 10.5,
+      "y": 15.2,
+      "earliest": 30,
+      "latest": 120,
+      "service_time": 10
+    }
+  ],
+  "traffic_conditions": [
+    {
+      "from_id": 0,
+      "to_id": 1,
+      "speed_factor": 0.8,
+      "delay": 5
+    }
+  ],
+  "config": {
+    "depot_id": 0,
+    "base_speed": 40.0,
+    "start_time": 0
+  }
+}
